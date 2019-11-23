@@ -1,9 +1,9 @@
-import {board} from './components/board.js';
-import {filter} from './components/filter.js';
-import {loadMenuButton} from './components/load-menu-button.js';
-import {siteMenu} from './components/site-menu.js';
-import {task} from './components/task.js';
-import {taskEdit} from './components/task-edit.js';
+import {board} from './components/board';
+import {filter} from './components/filter';
+import {loadMenuButton} from './components/load-menu-button';
+import {siteMenu} from './components/site-menu';
+import {task} from './components/task';
+import {taskEdit} from './components/task-edit';
 
 const TASK_COUNT = 3;
 
