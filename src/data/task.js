@@ -1,10 +1,10 @@
-import {colors, days} from '../const';
+import {COLORS, DAYS} from '../const';
 
-const descriptions = new Set([
+const descriptions = [
   `Изучить теорию`,
   `Сделать домашку`,
   `Пройти интенсив на соточку`
-]);
+];
 
 const generateDate = () => {
   const date = new Date();
@@ -17,7 +17,7 @@ const generateDate = () => {
 const generateRepeatingDays = (isRandom) => {
   const repeatDays = {};
 
-  days.forEach((item) => {
+  DAYS.forEach((item) => {
     repeatDays[item] = isRandom ? Math.random() > 0.5 : false;
   });
 
@@ -43,7 +43,7 @@ const generateNumber = (min, max) => {
 };
 
 const getRandomArrayItem = (array) => {
-  return array[generateNumber(0, array.length)];
+  return array[generateNumber(0, array.length - 1)];
 };
 
 const generateTask = () => {
@@ -54,7 +54,7 @@ const generateTask = () => {
     dueDate,
     repeatingDays: dueDate ? generateRepeatingDays(false) : generateRepeatingDays(true),
     tags: new Set(generateTags()),
-    color: getRandomArrayItem(colors),
+    color: getRandomArrayItem(COLORS),
     isFavorite: Math.random() > 0.5,
     isArchive: Math.random() > 0.5,
   };

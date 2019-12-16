@@ -1,14 +1,13 @@
-import {months} from '../const.js';
+import {MONTHS} from '../const.js';
 import {formatTime} from '../utils.js';
 
-
-const createHashtagsMarkup = (hashtags) => {
-  return hashtags
-    .map((hashtag) => {
+const createTagsMarkup = (tags) => {
+  return tags
+    .map((item) => {
       return (
         `<span class="card__hashtag-inner">
             <span class="card__hashtag-name">
-              #${hashtag}
+              #${item}
             </span>
           </span>`
       );
@@ -22,10 +21,10 @@ const createTemplate = (task) => {
   const isExpired = dueDate instanceof Date && dueDate < Date.now();
   const isDateShowing = !!dueDate;
 
-  const date = isDateShowing ? `${dueDate.getDate()} ${months[dueDate.getMonth()]}` : ``;
+  const date = isDateShowing ? `${dueDate.getDate()} ${MONTHS[dueDate.getMonth()]}` : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
-  const hashtags = createHashtagsMarkup(Array.from(tags));
+  const hashtags = createTagsMarkup(Array.from(tags));
   const repeatClass = Object.values(repeatingDays).some(Boolean) ? `card--repeat` : ``;
   const deadlineClass = isExpired ? `card--deadline` : ``;
 

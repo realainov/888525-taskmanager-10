@@ -37,13 +37,13 @@ render(taskListElement, loadMenuButton.createTemplate(), `afterend`);
 
 const loadMoreButton = siteMainElement.querySelector(`.load-more`);
 
+let showingTaskCount = SHOWING_TASKS_COUNT_ON_START;
+
 loadMoreButton.addEventListener(`click`, () => {
-  let showingTaskCount = SHOWING_TASKS_COUNT_ON_START;
+  tasks.slice(showingTaskCount, showingTaskCount + SHOWING_TASKS_COUNT_ON_BUTTON)
+    .forEach((item) => render(taskListElement, task.createTemplate(item), `beforeend`));
 
   showingTaskCount += SHOWING_TASKS_COUNT_ON_BUTTON;
-
-  tasks.slice(SHOWING_TASKS_COUNT_ON_START, showingTaskCount)
-    .forEach((item) => render(taskListElement, task.createTemplate(item), `beforeend`));
 
   if (showingTaskCount >= tasks.length) {
     loadMoreButton.remove();
