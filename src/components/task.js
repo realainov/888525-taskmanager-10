@@ -1,5 +1,5 @@
 import {MONTHS} from '../const.js';
-import {formatTime} from '../utils.js';
+import {createElement, formatTime} from '../utils.js';
 
 const createTagsMarkup = (tags) => {
   return tags
@@ -77,6 +77,21 @@ const createTemplate = (task) => {
   );
 };
 
-export const task = {
-  createTemplate
-};
+export default class Task {
+  constructor(task) {
+    this._element = null;
+    this._task = task;
+  }
+
+  createElement() {
+    if (!this._element) {
+      this._element = createElement(createTemplate(this._task));
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

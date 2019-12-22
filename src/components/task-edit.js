@@ -1,5 +1,5 @@
 import {COLORS, DAYS, MONTHS} from '../const.js';
-import {formatTime} from '../utils.js';
+import {createElement, formatTime} from '../utils.js';
 
 const createColorsMarkup = (colors, currentColor) => {
   return colors
@@ -179,6 +179,21 @@ const createTemplate = (task) => {
   );
 };
 
-export const taskEdit = {
-  createTemplate
-};
+export default class TaskEdit {
+  constructor(task) {
+    this._element = null;
+    this._task = task;
+  }
+
+  createElement() {
+    if (!this._element) {
+      this._element = createElement(createTemplate(this._task));
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

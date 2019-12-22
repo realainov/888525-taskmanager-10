@@ -1,3 +1,5 @@
+import {createElement} from "../utils";
+
 const createTemplate = () => {
   return (
     `<section class="board container">
@@ -12,6 +14,20 @@ const createTemplate = () => {
   );
 };
 
-export const board = {
-  createTemplate
-};
+export default class Board {
+  constructor() {
+    this._element = null;
+  }
+
+  createElement() {
+    if (!this._element) {
+      this._element = createElement(createTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
