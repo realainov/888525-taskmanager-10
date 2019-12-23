@@ -33,7 +33,7 @@ export default class Filter {
     this._filters = filters;
   }
 
-  createElement() {
+  getElement() {
     if (!this._element) {
       this._element = createElement(createTemplate(this._filters));
     }

@@ -17,8 +17,8 @@ const SHOWING_TASKS_COUNT_ON_START = 8;
 const SHOWING_TASKS_COUNT_ON_BUTTON = 8;
 
 const renderTask = (taskListElement, task) => {
-  const taskElement = new Task(task).createElement();
-  const taskEditElement = new TaskEdit(task).createElement();
+  const taskElement = new Task(task).getElement();
+  const taskEditElement = new TaskEdit(task).getElement();
 
   const onEscapeKeyDown = (evt) => {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
@@ -51,13 +51,13 @@ const renderTask = (taskListElement, task) => {
 
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
-const siteMenuElement = new SiteMenu().createElement();
+const siteMenuElement = new SiteMenu().getElement();
 
 render(siteHeaderElement, siteMenuElement);
 
 const filters = generateFilters();
-const filterElement = new Filter(filters).createElement();
-const boardElement = new Board().createElement();
+const filterElement = new Filter(filters).getElement();
+const boardElement = new Board().getElement();
 
 render(siteMainElement, filterElement);
 render(siteMainElement, boardElement);
@@ -66,12 +66,12 @@ const tasks = generateTasks(TASK_COUNT);
 const isAllTasksArchived = tasks.every((task) => task.isArchive);
 
 if (isAllTasksArchived) {
-  const noTasksElement = new NoTasks().createElement();
+  const noTasksElement = new NoTasks().getElement();
 
   render(boardElement, noTasksElement);
 } else {
-  const sortElement = new Sort().createElement();
-  const tasksElement = new Tasks().createElement();
+  const sortElement = new Sort().getElement();
+  const tasksElement = new Tasks().getElement();
 
   render(boardElement, sortElement);
   render(boardElement, tasksElement);
@@ -82,7 +82,7 @@ if (isAllTasksArchived) {
     renderTask(taskListElement, item);
   });
 
-  const loadButtonElement = new LoadButton().createElement();
+  const loadButtonElement = new LoadButton().getElement();
 
   render(taskListElement, loadButtonElement, `afterend`);
 

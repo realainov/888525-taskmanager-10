@@ -83,7 +83,7 @@ export default class Task {
     this._task = task;
   }
 
-  createElement() {
+  getElement() {
     if (!this._element) {
       this._element = createElement(createTemplate(this._task));
     }
