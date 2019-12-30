@@ -1,105 +1,28 @@
-import Board from './components/board';
-import Sort from './components/sort';
-import Filter from './components/filter';
-import LoadButton from './components/load-button';
-import SiteMenu from './components/site-menu';
-import Tasks from './components/tasks';
-import NoTasks from './components/no-tasks';
-import Task from './components/task';
-import TaskEdit from './components/task-edit';
-import {generateFilters} from "./data/filter";
-import {generateTasks} from "./data/task";
-import {render} from "./utils";
+import BoardComponent from './components/board';
+import FilterComponent from './components/filter';
+import SiteMenuComponent from './components/site-menu';
+import BoardController from './controllers/board.js';
+import {generateFilters} from './data/filter';
+import {generateTasks} from './data/task';
+import {render} from './utils/render';
 
 const TASK_COUNT = 22;
 
-const SHOWING_TASKS_COUNT_ON_START = 8;
-const SHOWING_TASKS_COUNT_ON_BUTTON = 8;
-
-const renderTask = (taskListElement, task) => {
-  const taskElement = new Task(task).getElement();
-  const taskEditElement = new TaskEdit(task).getElement();
-
-  const onEscapeKeyDown = (evt) => {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-
-    if (isEscKey) {
-      taskListElement.replaceChild(taskElement, taskEditElement);
-
-      document.removeEventListener(`keydown`, onEscapeKeyDown);
-    }
-  };
-
-  const editButtonElement = taskElement.querySelector(`.card__btn--edit`);
-
-  editButtonElement.addEventListener(`click`, () => {
-    taskListElement.replaceChild(taskEditElement, taskElement);
-
-    document.addEventListener(`keydown`, onEscapeKeyDown);
-  });
-
-  const editFormElement = taskEditElement.querySelector(`form`);
-
-  editFormElement.addEventListener(`submit`, () => {
-    taskListElement.replaceChild(taskElement, taskEditElement);
-
-    document.removeEventListener(`keydown`, onEscapeKeyDown);
-  });
-
-  render(taskListElement, taskElement);
-};
-
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
-const siteMenuElement = new SiteMenu().getElement();
-
-render(siteHeaderElement, siteMenuElement);
 
 const filters = generateFilters();
-const filterElement = new Filter(filters).getElement();
-const boardElement = new Board().getElement();
 
-render(siteMainElement, filterElement);
-render(siteMainElement, boardElement);
+const siteMenuComponent = new SiteMenuComponent();
+const filterComponent = new FilterComponent(filters);
+const boardComponent = new BoardComponent();
+
+render(siteHeaderElement, siteMenuComponent);
+render(siteMainElement, filterComponent);
+render(siteMainElement, boardComponent);
 
 const tasks = generateTasks(TASK_COUNT);
-const isAllTasksArchived = tasks.every((task) => task.isArchive);
 
-if (isAllTasksArchived) {
-  const noTasksElement = new NoTasks().getElement();
+const boardController = new BoardController(boardComponent);
 
-  render(boardElement, noTasksElement);
-} else {
-  const sortElement = new Sort().getElement();
-  const tasksElement = new Tasks().getElement();
-
-  render(boardElement, sortElement);
-  render(boardElement, tasksElement);
-
-  const taskListElement = boardElement.querySelector(`.board__tasks`);
-
-  tasks.slice(0, SHOWING_TASKS_COUNT_ON_START).forEach((item) => {
-    renderTask(taskListElement, item);
-  });
-
-  const loadButtonElement = new LoadButton().getElement();
-
-  render(taskListElement, loadButtonElement, `afterend`);
-
-  const loadMoreButton = siteMainElement.querySelector(`.load-more`);
-
-  let showingTaskCount = SHOWING_TASKS_COUNT_ON_START;
-
-  loadMoreButton.addEventListener(`click`, () => {
-    tasks.slice(showingTaskCount, showingTaskCount + SHOWING_TASKS_COUNT_ON_BUTTON)
-      .forEach((item) => {
-        renderTask(taskListElement, item);
-      });
-
-    showingTaskCount += SHOWING_TASKS_COUNT_ON_BUTTON;
-
-    if (showingTaskCount >= tasks.length) {
-      loadMoreButton.remove();
-    }
-  });
-}
+boardController.render(tasks);
