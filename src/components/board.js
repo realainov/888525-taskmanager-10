@@ -10,4 +10,8 @@ export default class BoardComponent extends AbstractComponent {
   getTemplate() {
     return createTemplate();
   }
+
+  get tasks() {
+    return this.findElement(`.board__tasks`);
+  }
 }

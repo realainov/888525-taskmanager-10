@@ -89,10 +89,6 @@ export default class TaskComponent extends AbstractComponent {
     return createTemplate(this._task);
   }
 
-  findElement(selector) {
-    return this.getElement().querySelector(selector);
-  }
-
   get editButton() {
     return this.findElement(`.card__btn--edit`);
   }

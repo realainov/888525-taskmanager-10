@@ -57,7 +57,7 @@ export default class BoardController {
       render(this._containerComponent.getElement(), this._sortComponent);
       render(this._containerComponent.getElement(), this._tasksComponent);
 
-      const taskListElement = this._containerComponent.findElement(`.board__tasks`);
+      const taskListElement = this._containerComponent.tasks;
 
       tasks.slice(0, SHOWING_TASKS_COUNT_ON_START).forEach((item) => {
         renderTask(taskListElement, item);
