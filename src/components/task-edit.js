@@ -190,4 +190,12 @@ export default class TaskEditComponent extends AbstractComponent {
   getTemplate() {
     return createTemplate(this._task);
   }
+
+  findElement(selector) {
+    return this.getElement().querySelector(selector);
+  }
+
+  get editForm() {
+    return this.findElement(`form`);
+  }
 }

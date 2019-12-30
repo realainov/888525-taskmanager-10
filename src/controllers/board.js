@@ -23,17 +23,13 @@ const renderTask = (taskListElement, task) => {
     }
   };
 
-  const editButtonElement = taskComponent.findElement(`.card__btn--edit`);
-
-  editButtonElement.addEventListener(`click`, () => {
+  taskComponent.editButton.addEventListener(`click`, () => {
     replace(taskEditComponent, taskComponent);
 
     document.addEventListener(`keydown`, onEscapeKeyDown);
   });
 
-  const editFormElement = taskEditComponent.findElement(`form`);
-
-  editFormElement.addEventListener(`submit`, () => {
+  taskEditComponent.editForm.addEventListener(`submit`, () => {
     replace(taskComponent, taskEditComponent);
 
     document.removeEventListener(`keydown`, onEscapeKeyDown);
@@ -45,6 +41,7 @@ const renderTask = (taskListElement, task) => {
 export default class BoardController {
   constructor(containerComponent) {
     this._containerComponent = containerComponent;
+
     this._noTasksComponent = new NoTasksComponent();
     this._sortComponent = new SortComponent();
     this._tasksComponent = new TasksComponent();
@@ -70,7 +67,7 @@ export default class BoardController {
 
       let showingTaskCount = SHOWING_TASKS_COUNT_ON_START;
 
-      this._loadButtonComponent.setEventHandler(`click`, () => {
+      this._loadButtonComponent.getElement().addEventListener(`click`, () => {
         tasks.slice(showingTaskCount, showingTaskCount + SHOWING_TASKS_COUNT_ON_BUTTON)
           .forEach((item) => {
             renderTask(taskListElement, item);
