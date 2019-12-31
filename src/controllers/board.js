@@ -23,13 +23,13 @@ const renderTask = (taskListElement, task) => {
     }
   };
 
-  taskComponent.editButton.addEventListener(`click`, () => {
+  taskComponent.editButton.setClickHandler(() => {
     replace(taskEditComponent, taskComponent);
 
     document.addEventListener(`keydown`, onEscapeKeyDown);
   });
 
-  taskEditComponent.editForm.addEventListener(`submit`, () => {
+  taskEditComponent.editForm.setSubmitHandler(() => {
     replace(taskComponent, taskEditComponent);
 
     document.removeEventListener(`keydown`, onEscapeKeyDown);
@@ -67,7 +67,7 @@ export default class BoardController {
 
       let showingTaskCount = SHOWING_TASKS_COUNT_ON_START;
 
-      this._loadButtonComponent.getElement().addEventListener(`click`, () => {
+      this._loadButtonComponent.setClickHandler(() => {
         tasks.slice(showingTaskCount, showingTaskCount + SHOWING_TASKS_COUNT_ON_BUTTON)
           .forEach((item) => {
             renderTask(taskListElement, item);

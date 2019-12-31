@@ -90,6 +90,12 @@ export default class TaskComponent extends AbstractComponent {
   }
 
   get editButton() {
-    return this.findElement(`.card__btn--edit`);
+    const editButtonElement = this.findElement(`.card__btn--edit`);
+
+    editButtonElement.setClickHandler = (handler) => {
+      editButtonElement.addEventListener(`click`, handler);
+    };
+
+    return editButtonElement;
   }
 }

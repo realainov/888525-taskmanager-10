@@ -192,6 +192,12 @@ export default class TaskEditComponent extends AbstractComponent {
   }
 
   get editForm() {
-    return this.findElement(`form`);
+    const editFormElement = this.findElement(`form`);
+
+    editFormElement.setSubmitHandler = (handler) => {
+      editFormElement.addEventListener(`submit`, handler);
+    };
+
+    return editFormElement;
   }
 }
