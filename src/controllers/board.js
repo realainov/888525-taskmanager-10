@@ -23,13 +23,13 @@ const renderTask = (taskListElement, task) => {
     }
   };
 
-  taskComponent.editButton.setClickHandler(() => {
+  taskComponent.setEditButtonClickHandler(() => {
     replace(taskEditComponent, taskComponent);
 
     document.addEventListener(`keydown`, onEscapeKeyDown);
   });
 
-  taskEditComponent.editForm.setSubmitHandler(() => {
+  taskEditComponent.setEditFormSubmitHandler(() => {
     replace(taskComponent, taskEditComponent);
 
     document.removeEventListener(`keydown`, onEscapeKeyDown);
