@@ -4,15 +4,25 @@ export const remove = (component) => {
   component.removeElement();
 };
 
+export const RenderPosition = {
+  BEFOREBEGIN: `beforebegin`,
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`,
+  AFTEREND: `afterend`
+};
+
 export const render = (container, component, place) => {
   switch (place) {
-    case `beforebegin`:
+    case RenderPosition.BEFOREBEGIN:
       container.before(component.getElement());
       break;
-    case `afterbegin`:
+    case RenderPosition.AFTERBEGIN:
       container.prepend(component.getElement());
       break;
-    case `afterend`:
+    case RenderPosition.BEFOREEND:
+      container.append(component.getElement());
+      break;
+    case RenderPosition.AFTEREND:
       container.after(component.getElement());
       break;
     default:

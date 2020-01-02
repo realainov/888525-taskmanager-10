@@ -4,38 +4,39 @@ import LoadButtonComponent from '../components/load-button';
 import TasksComponent from '../components/tasks';
 import NoTasksComponent from '../components/no-tasks';
 import SortComponent from '../components/sort';
-import {render, replace, remove} from '../utils/render';
+import {SortType} from '../components/sort';
+import {render, replace, remove, RenderPosition} from '../utils/render';
 
 const SHOWING_TASKS_COUNT_ON_START = 8;
 const SHOWING_TASKS_COUNT_ON_BUTTON = 8;
 
-const renderTask = (taskListElement, task) => {
+const renderTask = (container, task) => {
   const taskComponent = new TaskComponent(task);
   const taskEditComponent = new TaskEditComponent(task);
 
-  const onEscapeKeyDown = (evt) => {
+  const onEscKeyDown = (evt) => {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
 
     if (isEscKey) {
       replace(taskComponent, taskEditComponent);
 
-      document.removeEventListener(`keydown`, onEscapeKeyDown);
+      document.removeEventListener(`keydown`, onEscKeyDown);
     }
   };
 
   taskComponent.setEditButtonClickHandler(() => {
     replace(taskEditComponent, taskComponent);
 
-    document.addEventListener(`keydown`, onEscapeKeyDown);
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
   taskEditComponent.setEditFormSubmitHandler(() => {
     replace(taskComponent, taskEditComponent);
 
-    document.removeEventListener(`keydown`, onEscapeKeyDown);
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
-  render(taskListElement, taskComponent);
+  render(container, taskComponent);
 };
 
 export default class BoardController {
@@ -49,6 +50,29 @@ export default class BoardController {
   }
 
   render(tasks) {
+    const renderLoadButton = (container) => {
+      let showingTaskCount = SHOWING_TASKS_COUNT_ON_START;
+
+      if (showingTaskCount > tasks.length) {
+        return;
+      }
+
+      render(container, this._loadButtonComponent, RenderPosition.AFTEREND);
+
+      this._loadButtonComponent.setClickHandler(() => {
+        tasks.slice(showingTaskCount, showingTaskCount + SHOWING_TASKS_COUNT_ON_BUTTON)
+          .forEach((item) => {
+            renderTask(container, item);
+          });
+
+        showingTaskCount += SHOWING_TASKS_COUNT_ON_BUTTON;
+
+        if (showingTaskCount >= tasks.length) {
+          remove(this._loadButtonComponent);
+        }
+      });
+    };
+
     const isAllTasksArchived = tasks.every((task) => task.isArchive);
 
     if (isAllTasksArchived) {
@@ -57,25 +81,36 @@ export default class BoardController {
       render(this._containerComponent.getElement(), this._sortComponent);
       render(this._containerComponent.getElement(), this._tasksComponent);
 
-      const taskListElement = this._containerComponent.tasks;
-
-      tasks.slice(0, SHOWING_TASKS_COUNT_ON_START).forEach((item) => {
-        renderTask(taskListElement, item);
+      tasks.slice(0, SHOWING_TASKS_COUNT_ON_START).forEach((task) => {
+        renderTask(this._tasksComponent.getElement(), task);
       });
 
-      render(taskListElement, this._loadButtonComponent, `afterend`);
+      renderLoadButton(this._tasksComponent.getElement(), tasks);
 
-      let showingTaskCount = SHOWING_TASKS_COUNT_ON_START;
+      this._sortComponent.setSortTypeChangeHandler((sortType) => {
+        let sortedTasks = [];
 
-      this._loadButtonComponent.setClickHandler(() => {
-        tasks.slice(showingTaskCount, showingTaskCount + SHOWING_TASKS_COUNT_ON_BUTTON)
-          .forEach((item) => {
-            renderTask(taskListElement, item);
-          });
+        switch (sortType) {
+          case SortType.DATE_UP:
+            sortedTasks = tasks.slice().sort((a, b) => a.dueDate - b.dueDate);
+            break;
+          case SortType.DATE_DOWN:
+            sortedTasks = tasks.slice().sort((a, b) => b.dueDate - a.dueDate);
+            break;
+          case SortType.DEFAULT:
+            sortedTasks = tasks.slice(0, SHOWING_TASKS_COUNT_ON_START);
+            break;
+        }
 
-        showingTaskCount += SHOWING_TASKS_COUNT_ON_BUTTON;
+        this._tasksComponent.getElement().innerHTML = ``;
 
-        if (showingTaskCount >= tasks.length) {
+        sortedTasks.forEach((task) => {
+          renderTask(this._tasksComponent.getElement(), task);
+        });
+
+        if (sortType === SortType.DEFAULT) {
+          renderLoadButton();
+        } else {
           remove(this._loadButtonComponent);
         }
       });
