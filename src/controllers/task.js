@@ -35,9 +35,17 @@ export default class TaskController {
       document.addEventListener(`keydown`, this._onEscKeyDown);
     });
 
-    this._taskComponent.setArchiveButtonClickHandler(() => this._onDataChange());
+    this._taskComponent.setArchiveButtonClickHandler(() => {
+      this._onDataChange(this, task, Object.assign({}, task, {
+        isArchive: !task.isArchive,
+      }));
+    });
 
-    this._taskComponent.setFavoritesButtonClickHandler(() => this._onDataChange());
+    this._taskComponent.setFavoritesButtonClickHandler(() => {
+      this._onDataChange(this, task, Object.assign({}, task, {
+        isFavorite: !task.isFavorite,
+      }));
+    });
 
     this._taskEditComponent.setEditFormSubmitHandler((evt) => {
       evt.preventDefault();

@@ -8,9 +8,9 @@ import TaskController from './task.js';
 const SHOWING_TASKS_COUNT_ON_START = 8;
 const SHOWING_TASKS_COUNT_BY_BUTTON = 8;
 
-const renderTasks = (taskListElement, tasks, onDataChange, onViewChange) => {
+const renderTasks = (container, tasks, onDataChange, onViewChange) => {
   return tasks.map((task) => {
-    const taskController = new TaskController(taskListElement, onDataChange, onViewChange);
+    const taskController = new TaskController(container, onDataChange, onViewChange);
 
     taskController.render(task);
 
@@ -85,7 +85,17 @@ export default class BoardController {
     });
   }
 
-  _onDataChange() {}
+  _onDataChange(taskController, oldData, newData) {
+    const index = this._tasks.findIndex((item) => item === oldData);
+
+    if (index === -1) {
+      return;
+    }
+
+    this._tasks = [].concat(this._tasks.slice(0, index), newData, this._tasks.slice(index + 1));
+
+    taskController.render(this._tasks[index]);
+  }
 
   _onViewChange() {
     this._showedTaskControllers.forEach((item) => item.setDefaultView());
