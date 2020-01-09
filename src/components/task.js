@@ -1,6 +1,6 @@
-import {MONTHS} from '../const.js';
-import {formatTime} from '../utils/common.js';
 import AbstractComponent from './abstract-component';
+import {formatTime, formatDate, isOverdueDate} from '../utils/common';
+import he from 'he';
 
 const createTagsMarkup = (tags) => {
   return tags
@@ -28,31 +28,33 @@ const createButtonMarkup = (name, isActive) => {
 };
 
 const createTemplate = (task) => {
-  const {description, tags, dueDate, color, repeatingDays, isArchive, isFavorite} = task;
+  const {description: currentDescription, tags, dueDate, color, repeatingDays, isArchive, isFavorite} = task;
 
-  const isExpired = dueDate instanceof Date && dueDate < Date.now();
+  const isExpired = dueDate instanceof Date && isOverdueDate(dueDate);
   const isDateShowing = !!dueDate;
 
-  const date = isDateShowing ? `${dueDate.getDate()} ${MONTHS[dueDate.getMonth()]}` : ``;
+  const date = isDateShowing ? formatDate(dueDate) : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
 
-  const hashtags = createTagsMarkup(Array.from(tags));
+  const description = he.encode(currentDescription);
+
+  const tagsMarkup = createTagsMarkup(Array.from(tags));
 
   const repeatClass = Object.values(repeatingDays).some(Boolean) ? `card--repeat` : ``;
   const deadlineClass = isExpired ? `card--deadline` : ``;
 
-  const editButton = createButtonMarkup(`edit`, true);
-  const archiveButton = createButtonMarkup(`archive`, isArchive);
-  const favoritesButton = createButtonMarkup(`favorites`, isFavorite);
+  const editButtonMarkup = createButtonMarkup(`edit`, true);
+  const archiveButtonMarkup = createButtonMarkup(`archive`, isArchive);
+  const favoritesButtonMarkup = createButtonMarkup(`favorites`, isFavorite);
 
   return (
     `<article class="card card--${color} ${repeatClass} ${deadlineClass}">
       <div class="card__form">
         <div class="card__inner">
           <div class="card__control">
-            ${editButton}
-            ${archiveButton}
-            ${favoritesButton}
+            ${editButtonMarkup}
+            ${archiveButtonMarkup}
+            ${favoritesButtonMarkup}
           </div>
           <div class="card__color-bar">
             <svg class="card__color-bar-wave" width="100%" height="10">
@@ -74,7 +76,7 @@ const createTemplate = (task) => {
               </div>
               <div class="card__hashtag">
                 <div class="card__hashtag-list">
-                  ${hashtags}
+                  ${tagsMarkup}
                 </div>
               </div>
             </div>
