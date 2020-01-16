@@ -1,21 +1,33 @@
+import API from './api.js';
 import TasksModel from './models/tasks';
 import BoardComponent from './components/board';
-import SiteMenuComponent from './components/site-menu';
+import SiteMenuComponent, {MenuItem} from './components/site-menu';
+import StatisticsComponent from './components/statistics';
 import FilterController from './controllers/filter';
 import BoardController from './controllers/board';
-import {generateTasks} from './data/task';
 import {render} from './utils/render';
 
-const TASK_COUNT = 22;
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=`;
+const END_POINT = `https://htmlacademy-es-10.appspot.com/task-manager`;
+
+const api = new API(END_POINT, AUTHORIZATION);
 
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
 
-const tasks = generateTasks(TASK_COUNT);
-
 const tasksModel = new TasksModel();
 
-tasksModel.setTasks(tasks);
+const dateTo = new Date();
+
+const dateFrom = (() => {
+  const date = new Date(dateTo);
+
+  date.setDate(date.getDate() - 7);
+
+  return date;
+})();
+
+const statisticsComponent = new StatisticsComponent({tasks: tasksModel, dateFrom, dateTo});
 
 const filterController = new FilterController(siteMainElement, tasksModel);
 
@@ -26,11 +38,40 @@ const boardComponent = new BoardComponent();
 
 render(siteHeaderElement, siteMenuComponent);
 render(siteMainElement, boardComponent);
+render(siteMainElement, statisticsComponent);
 
-siteMenuComponent.getElement().querySelector(`.control__label--new-task`).addEventListener(`click`, () => {
-  boardController.createTask();
+const boardController = new BoardController(boardComponent, tasksModel, api);
+
+statisticsComponent.hide();
+
+siteMenuComponent.setOnChange((menuItem) => {
+  switch (menuItem) {
+    case MenuItem.NEW_TASK:
+      siteMenuComponent.setActiveItem(MenuItem.TASKS);
+
+      statisticsComponent.hide();
+
+      boardController.show();
+      boardController.createTask();
+
+      break;
+    case MenuItem.STATISTICS:
+      boardController.hide();
+
+      statisticsComponent.show();
+
+      break;
+    case MenuItem.TASKS:
+      statisticsComponent.hide();
+
+      boardController.show();
+
+      break;
+  }
 });
 
-const boardController = new BoardController(boardComponent, tasksModel);
-
-boardController.render();
+api.getTasks()
+  .then((tasks) => {
+    tasksModel.setTasks(tasks);
+    boardController.render();
+  });

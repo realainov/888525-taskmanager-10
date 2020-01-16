@@ -20,9 +20,10 @@ const renderTasks = (container, tasks, onDataChange, onViewChange) => {
 };
 
 export default class BoardController {
-  constructor(containerComponent, tasksModel) {
+  constructor(containerComponent, tasksModel, api) {
     this._containerComponent = containerComponent;
     this._tasksModel = tasksModel;
+    this._api = api;
 
     this._noTasksComponent = new NoTasksComponent();
     this._sortComponent = new SortComponent();
@@ -42,6 +43,14 @@ export default class BoardController {
 
     this._sortComponent.setSortTypeChangeHandler(this._onSortTypeChange);
     this._tasksModel.setFilterChangeHandler(this._onFilterChange);
+  }
+
+  hide() {
+    this._containerComponent.hide();
+  }
+
+  show() {
+    this._containerComponent.show();
   }
 
   render() {
@@ -124,10 +133,9 @@ export default class BoardController {
       } else {
         this._tasksModel.addTask(newData);
 
-        taskController.render(newData);
+        taskController.render(newData, Mode.DEFAULT);
 
         const destroyedTask = this._showedTaskControllers.pop();
-
         destroyedTask.destroy();
 
         this._showedTaskControllers = [].concat(taskController, this._showedTaskControllers);
@@ -138,11 +146,16 @@ export default class BoardController {
 
       this._updateTasks(this._showingTasksCount);
     } else {
-      const isSuccess = this._tasksModel.updateTask(newData, oldData.id);
+      this._api.updateTask(newData, oldData.id)
+        .then((task) => {
+          const isSuccess = this._tasksModel.updateTask(task, oldData.id);
 
-      if (isSuccess) {
-        taskController.render(newData);
-      }
+          if (isSuccess) {
+            taskController.render(task, Mode.DEFAULT);
+
+            this._updateTasks(this._showingTasksCount);
+          }
+        });
     }
   }
 

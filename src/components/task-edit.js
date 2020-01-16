@@ -82,28 +82,6 @@ const createTagsMarkup = (tags) => {
     .join(`\n`);
 };
 
-const parseFormData = (formData) => {
-  const repeatingDays = DAYS.reduce((acc, day) => {
-    acc[day] = false;
-
-    return acc;
-  }, {});
-
-  const date = formData.get(`date`);
-
-  return {
-    description: formData.get(`text`),
-    color: formData.get(`color`),
-    tags: formData.getAll(`hashtag`),
-    dueDate: date ? new Date(date) : null,
-    repeatingDays: formData.getAll(`repeat`).reduce((acc, it) => {
-      acc[it] = true;
-
-      return acc;
-    }, repeatingDays),
-  };
-};
-
 const createTemplate = (task, options) => {
   const {tags, color} = task;
   const {isDateShowing, isRepeatingTask, repeatingDays, dueDate, currentDescription} = options;
@@ -271,9 +249,8 @@ export default class TaskEditComponent extends AbstractSmartComponent {
 
   getData() {
     const form = this.getElement().querySelector(`.card__form`);
-    const formData = new FormData(form);
 
-    return parseFormData(formData);
+    return new FormData(form);
   }
 
   setDeleteButtonClickHandler(handler) {
@@ -300,7 +277,8 @@ export default class TaskEditComponent extends AbstractSmartComponent {
       this._flatpickr = flatpickr(dateElement, {
         altInput: true,
         allowInput: true,
-        defaultDate: this._options.dueDate
+        defaultDate: this._options.dueDate,
+        enableTime: true
       });
     }
   }
