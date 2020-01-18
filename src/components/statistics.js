@@ -4,6 +4,8 @@ import moment from 'moment';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import 'chart.js/dist/Chart.min.css';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
 
 const Color = {
   BLACK: `black`,
