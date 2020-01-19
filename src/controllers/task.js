@@ -6,6 +6,7 @@ import {Color, Mode, DAYS} from '../const';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
+
 export const EmptyTask = {
   description: ``,
   dueDate: null,
